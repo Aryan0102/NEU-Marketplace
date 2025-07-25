@@ -1,8 +1,10 @@
 export const colors = {
-    sand: '#E5C687',      // Background color
-    green: '#4A7C59',     // Primary buttons and text
-    tan: '#C5A572',       // Secondary elements
-    orange: '#E89B4F',    // Accent color
+    background: '#FDF6E3',
+    primary: '#D2691E',
+    secondary: '#F4A460',
+    accent: '#FF7F50',
+    text: '#5D4E37',
+    lightText: '#8B7355',
     white: '#FFFFFF',
-    gray: '#6B7280'
+    gray: '#A0A0A0'
 };
