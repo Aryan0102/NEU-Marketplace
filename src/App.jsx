@@ -1,56 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { colors } from './constants/colors';
-import Header from './components/Header';
-import ListingsGrid from './components/ListingsGrid';
-import CreateListingModal from './components/CreateListingModal';
-import ListingDetailModal from './components/ListingDetailModal';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { supabase } from './config/supabaseClient';
+import MainPage from './pages/MainPage';
+import ShoppingCartPage from './pages/ShoppingCartPage';
 
-console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
-console.log("Supabase Public Key:", import.meta.env.VITE_SUPABASE_PUBLIC);
-
-const supabase = createClient(import.meta.env.VITE_SUPABASE_URL, import.meta.env.VITE_SUPABASE_PUBLIC);
-
-function App() {
+function AppContent() {
+  const navigate = useNavigate();
   const [listings, setListings] = useState([]);
-  const [filteredListings, setFilteredListings] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("all");
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedListing, setSelectedListing] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
   const [currentUser] = useState({ id: 1, name: "Current User" });
-  const [formData, setFormData] = useState({
-    title: "",
-    price: "",
-    category: "textbooks",
-    description: "",
-    location: ""
-  });
 
   useEffect(() => {
     fetchListings();
   }, []);
 
-  useEffect(() => {
-    let filtered = listings;
-    
-    if (searchTerm) {
-      filtered = filtered.filter(listing =>
-        listing.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        listing.description.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter(listing => listing.category === selectedCategory);
-    }
-    
-    setFilteredListings(filtered);
-  }, [searchTerm, selectedCategory, listings]);
-
   async function fetchListings() {
-    console.log('Fetching listings...');
-    
     const { data, error } = await supabase
       .from('listings')
       .select('*')
@@ -64,12 +28,7 @@ function App() {
     setListings(data || []);
   }
 
-  const handleCreateListing = async () => {
-    if (!formData.title || !formData.price) {
-      alert("Please fill in title and price");
-      return;
-    }
-    
+  const handleCreateListing = async (formData) => {
     const { data } = await supabase
       .from('listings')
       .insert([{
@@ -87,60 +46,92 @@ function App() {
     
     if (data) {
       setListings([data[0], ...listings]);
-      setFormData({
-        title: "",
-        price: "",
-        category: "textbooks",
-        description: "",
-        location: ""
-      });
-      setShowCreateModal(false);
     }
   };
 
   const handleDeleteListing = async (id) => {
-    if (confirm("Are you sure you want to delete this listing?")) {
-      await supabase.from('listings').delete().eq('id', id);
-      setListings(listings.filter(listing => listing.id !== id));
-      setSelectedListing(null);
+    await supabase.from('listings').delete().eq('id', id);
+    setListings(listings.filter(listing => listing.id !== id));
+  };
+
+  const handleAddToCart = (listing) => {
+    const existingItem = cartItems.find(item => item.id === listing.id);
+    
+    if (existingItem) {
+      setCartItems(cartItems.map(item => 
+        item.id === listing.id 
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      ));
+    } else {
+      setCartItems([...cartItems, { ...listing, quantity: 1 }]);
     }
   };
 
+  const handleUpdateQuantity = (id, newQuantity) => {
+    if (newQuantity <= 0) {
+      handleRemoveFromCart(id);
+    } else {
+      setCartItems(cartItems.map(item =>
+        item.id === id ? { ...item, quantity: newQuantity } : item
+      ));
+    }
+  };
+
+  const handleRemoveFromCart = (id) => {
+    setCartItems(cartItems.filter(item => item.id !== id));
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
+
+  const handleCheckout = () => {
+    alert(`Checkout total: $${getTotalPrice().toFixed(2)}\nThis would connect to a payment processor.`);
+  };
+
+  const getCartItemCount = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+
   return (
-    <div 
-      className="min-h-screen"
-      style={{ background: `linear-gradient(to bottom, ${colors.background}, ${colors.white})` }}
-    >
-      <Header
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        selectedCategory={selectedCategory}
-        setSelectedCategory={setSelectedCategory}
-        onPostClick={() => setShowCreateModal(true)}
+    <Routes>
+      <Route 
+        path="/" 
+        element={
+          <MainPage
+            listings={listings}
+            onCreateListing={handleCreateListing}
+            onDeleteListing={handleDeleteListing}
+            currentUser={currentUser}
+            onAddToCart={handleAddToCart}
+            cartItemCount={getCartItemCount()}
+            onNavigateToCart={() => navigate('/cart')}
+          />
+        } 
       />
-
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        <ListingsGrid
-          listings={filteredListings}
-          onListingClick={setSelectedListing}
-        />
-      </main>
-
-      <CreateListingModal
-        show={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={handleCreateListing}
+      <Route 
+        path="/cart" 
+        element={
+          <ShoppingCartPage
+            cartItems={cartItems}
+            onUpdateQuantity={handleUpdateQuantity}
+            onRemoveItem={handleRemoveFromCart}
+            onCheckout={handleCheckout}
+            onBack={() => navigate('/')}
+            getTotalPrice={getTotalPrice}
+          />
+        } 
       />
+    </Routes>
+  );
+}
 
-      <ListingDetailModal
-        listing={selectedListing}
-        currentUserId={currentUser.id}
-        onClose={() => setSelectedListing(null)}
-        onDelete={handleDeleteListing}
-      />
-    </div>
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   );
 }
 

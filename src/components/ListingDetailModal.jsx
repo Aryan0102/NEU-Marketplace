@@ -1,11 +1,9 @@
 import React from 'react';
-import { X, MessageCircle, Edit, Trash2, User, MapPin, Star } from 'lucide-react';
+import { X, MessageCircle, Edit, Trash2, User, MapPin, Star, ShoppingCart } from 'lucide-react';
 import { colors } from '../constants/colors';
 
-function ListingDetailModal({ listing, currentUserId, onClose, onDelete }) {
+function ListingDetailModal({ listing, onClose, onDelete, onAddToCart }) {
   if (!listing) return null;
-
-  const isOwner = listing.seller_id === currentUserId;
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
@@ -56,31 +54,37 @@ function ListingDetailModal({ listing, currentUserId, onClose, onDelete }) {
 
           <div className="flex gap-3">
             <button
+              onClick={() => {
+                onAddToCart(listing);
+                onClose();
+              }}
+              className="flex-1 px-4 py-3 rounded-lg font-semibold text-white flex items-center justify-center gap-2 hover:scale-105 transition"
+              style={{ backgroundColor: colors.accent }}
+            >
+              <ShoppingCart size={20} />
+              Add to Cart
+            </button>
+            <button
               className="flex-1 px-4 py-3 rounded-lg font-semibold text-white flex items-center justify-center gap-2 hover:scale-105 transition"
               style={{ backgroundColor: colors.primary }}
             >
               <MessageCircle size={20} />
               Contact Seller
             </button>
-
-            {isOwner && (
-              <>
-                <button
-                  className="px-4 py-3 border-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50"
-                  style={{ borderColor: colors.secondary, color: colors.text }}
-                >
-                  <Edit size={20} />
-                  Edit
-                </button>
-                <button
-                  onClick={() => onDelete(listing.id)}
-                  className="px-4 py-3 border-2 border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 flex items-center gap-2"
-                >
-                  <Trash2 size={20} />
-                  Delete
-                </button>
-              </>
-            )}
+            <button
+              className="px-4 py-3 border-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50"
+              style={{ borderColor: colors.secondary, color: colors.text }}
+            >
+              <Edit size={20} />
+              Edit
+            </button>
+            <button
+              onClick={() => onDelete(listing.id)}
+              className="px-4 py-3 border-2 border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 flex items-center gap-2"
+            >
+              <Trash2 size={20} />
+              Delete
+            </button>
           </div>
         </div>
       </div>
