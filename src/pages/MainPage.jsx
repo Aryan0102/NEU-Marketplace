@@ -8,8 +8,7 @@ import ListingDetailModal from '../components/ListingDetailModal';
 function MainPage({ 
   listings, 
   onCreateListing, 
-  onDeleteListing, 
-  currentUser,
+  onDeleteListing,
   onAddToCart,
   cartItemCount,
   onNavigateToCart 
@@ -69,10 +68,7 @@ function MainPage({
   };
 
   return (
-    <div 
-      className="min-h-screen"
-      style={{ background: `linear-gradient(to bottom, ${colors.background}, ${colors.white})` }}
-    >
+    <div className="min-h-screen" style={{ backgroundColor: colors.background }}>
       <Header
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -100,7 +96,6 @@ function MainPage({
 
       <ListingDetailModal
         listing={selectedListing}
-        currentUserId={currentUser.id}
         onClose={() => setSelectedListing(null)}
         onDelete={handleDeleteListing}
         onAddToCart={onAddToCart}

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Package } from 'lucide-react';
 import { colors } from '../constants/colors';
 import ListingCard from './ListingCard';
@@ -7,13 +6,8 @@ function ListingsGrid({ listings, onListingClick }) {
   if (listings.length === 0) {
     return (
       <div className="text-center py-16">
-        <div 
-          className="w-24 h-24 mx-auto mb-4 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: colors.secondary }}
-        >
-          <Package size={48} style={{ color: colors.white }} />
-        </div>
-        <p className="text-xl font-medium mb-2" style={{ color: colors.text }}>
+        <Package size={48} className="mx-auto mb-4" style={{ color: colors.lightText }} />
+        <p className="text-xl font-medium" style={{ color: colors.text }}>
           No items found
         </p>
         <p style={{ color: colors.lightText }}>

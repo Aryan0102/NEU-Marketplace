@@ -1,4 +1,3 @@
-import React from 'react';
 import { X, MessageCircle, Edit, Trash2, User, MapPin, Star, ShoppingCart } from 'lucide-react';
 import { colors } from '../constants/colors';
 
@@ -7,25 +6,25 @@ function ListingDetailModal({ listing, onClose, onDelete, onAddToCart }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="relative h-64">
+      <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="relative">
           <img
             src={listing.image}
             alt={listing.title}
-            className="w-full h-full object-cover"
+            className="w-full h-64 object-cover"
           />
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 bg-white rounded-full p-2 shadow-lg hover:bg-gray-100"
+            className="absolute top-4 right-4 bg-white rounded-full p-2"
           >
             <X size={20} />
           </button>
         </div>
-
+        
         <div className="p-6">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h2 className="text-2xl font-bold mb-2" style={{ color: colors.text }}>
+              <h2 className="text-2xl font-bold" style={{ color: colors.text }}>
                 {listing.title}
               </h2>
               <div className="flex items-center gap-4 text-sm" style={{ color: colors.lightText }}>
@@ -58,29 +57,28 @@ function ListingDetailModal({ listing, onClose, onDelete, onAddToCart }) {
                 onAddToCart(listing);
                 onClose();
               }}
-              className="flex-1 px-4 py-3 rounded-lg font-semibold text-white flex items-center justify-center gap-2 hover:scale-105 transition"
+              className="flex-1 px-4 py-3 rounded text-white flex items-center justify-center gap-2"
               style={{ backgroundColor: colors.accent }}
             >
               <ShoppingCart size={20} />
               Add to Cart
             </button>
             <button
-              className="flex-1 px-4 py-3 rounded-lg font-semibold text-white flex items-center justify-center gap-2 hover:scale-105 transition"
+              className="flex-1 px-4 py-3 rounded text-white flex items-center justify-center gap-2"
               style={{ backgroundColor: colors.primary }}
             >
               <MessageCircle size={20} />
               Contact Seller
             </button>
             <button
-              className="px-4 py-3 border-2 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-50"
-              style={{ borderColor: colors.secondary, color: colors.text }}
+              className="px-4 py-3 border rounded flex items-center gap-2"
             >
               <Edit size={20} />
               Edit
             </button>
             <button
               onClick={() => onDelete(listing.id)}
-              className="px-4 py-3 border-2 border-red-300 text-red-600 rounded-lg font-medium hover:bg-red-50 flex items-center gap-2"
+              className="px-4 py-3 border border-red-300 text-red-600 rounded flex items-center gap-2"
             >
               <Trash2 size={20} />
               Delete
