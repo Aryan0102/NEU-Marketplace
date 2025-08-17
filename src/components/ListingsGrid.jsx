@@ -1,8 +1,10 @@
 import { Package } from 'lucide-react';
 import { colors } from '../constants/colors';
 import ListingCard from './ListingCard';
+import { useAuth } from '../contexts/AuthContext';
 
-function ListingsGrid({ listings, onListingClick }) {
+function ListingsGrid({ listings, onListingClick, onDeleteListing }) {
+  const { user } = useAuth();
   if (listings.length === 0) {
     return (
       <div className="text-center py-16">
@@ -24,6 +26,7 @@ function ListingsGrid({ listings, onListingClick }) {
           key={listing.id}
           listing={listing}
           onClick={() => onListingClick(listing)}
+          onDelete={user ? onDeleteListing : null}
         />
       ))}
     </div>

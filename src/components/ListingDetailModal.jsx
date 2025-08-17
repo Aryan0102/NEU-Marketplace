@@ -1,7 +1,10 @@
 import { X, MessageCircle, Edit, Trash2, User, MapPin, Star, ShoppingCart } from 'lucide-react';
 import { colors } from '../constants/colors';
+import { useAuth } from '../contexts/AuthContext';
 
 function ListingDetailModal({ listing, onClose, onDelete, onAddToCart }) {
+  const { user } = useAuth();
+  const isOwner = user && listing && listing.seller_id === user.id;
   if (!listing) return null;
 
   return (
@@ -70,19 +73,23 @@ function ListingDetailModal({ listing, onClose, onDelete, onAddToCart }) {
               <MessageCircle size={20} />
               Contact Seller
             </button>
-            <button
-              className="px-4 py-3 border rounded flex items-center gap-2"
-            >
-              <Edit size={20} />
-              Edit
-            </button>
-            <button
-              onClick={() => onDelete(listing.id)}
-              className="px-4 py-3 border border-red-300 text-red-600 rounded flex items-center gap-2"
-            >
-              <Trash2 size={20} />
-              Delete
-            </button>
+            {isOwner && (
+              <>
+                <button
+                  className="px-4 py-3 border rounded flex items-center gap-2"
+                >
+                  <Edit size={20} />
+                  Edit
+                </button>
+                <button
+                  onClick={() => onDelete(listing.id)}
+                  className="px-4 py-3 border border-red-300 text-red-600 rounded flex items-center gap-2"
+                >
+                  <Trash2 size={20} />
+                  Delete
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

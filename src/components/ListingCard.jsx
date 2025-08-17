@@ -1,7 +1,10 @@
-import { User, Star } from 'lucide-react';
+import { User, Star, Trash2 } from 'lucide-react';
 import { colors } from '../constants/colors';
+import { useAuth } from '../contexts/AuthContext';
 
-function ListingCard({ listing, onClick }) {
+function ListingCard({ listing, onClick, onDelete }) {
+  const { user } = useAuth();
+  const isOwner = user && listing.seller_id === user.id;
   return (
     <div
       onClick={onClick}
@@ -30,9 +33,23 @@ function ListingCard({ listing, onClick }) {
           <User size={14} />
           <span>{listing.seller_name}</span>
         </div>
-        <div className="flex items-center gap-1" style={{ color: colors.accent }}>
-          <Star size={14} fill="currentColor" />
-          <span>{listing.seller_rating}</span>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1" style={{ color: colors.accent }}>
+            <Star size={14} fill="currentColor" />
+            <span>{listing.seller_rating}</span>
+          </div>
+          {isOwner && onDelete && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(listing.id);
+              }}
+              className="text-red-500 hover:text-red-700 p-1"
+              title="Delete listing"
+            >
+              <Trash2 size={14} />
+            </button>
+          )}
         </div>
       </div>
     </div>

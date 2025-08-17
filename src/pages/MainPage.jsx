@@ -4,6 +4,8 @@ import Header from '../components/Header';
 import ListingsGrid from '../components/ListingsGrid';
 import CreateListingModal from '../components/CreateListingModal';
 import ListingDetailModal from '../components/ListingDetailModal';
+import AuthModal from '../components/AuthModal';
+import { useAuth } from '../contexts/AuthContext';
 
 function MainPage({ 
   listings, 
@@ -18,6 +20,8 @@ function MainPage({
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedListing, setSelectedListing] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const { user } = useAuth();
   const [formData, setFormData] = useState({
     title: "",
     price: "",
@@ -44,6 +48,11 @@ function MainPage({
   }, [searchTerm, selectedCategory, listings]);
 
   const handleCreateListing = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    
     if (!formData.title || !formData.price) {
       alert("Please fill in title and price");
       return;
@@ -77,12 +86,14 @@ function MainPage({
         onPostClick={() => setShowCreateModal(true)}
         cartItemCount={cartItemCount}
         onCartClick={onNavigateToCart}
+        onAuthClick={() => setShowAuthModal(true)}
       />
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         <ListingsGrid
           listings={filteredListings}
           onListingClick={setSelectedListing}
+          onDeleteListing={handleDeleteListing}
         />
       </main>
 
@@ -99,6 +110,11 @@ function MainPage({
         onClose={() => setSelectedListing(null)}
         onDelete={handleDeleteListing}
         onAddToCart={onAddToCart}
+      />
+
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
       />
     </div>
   );

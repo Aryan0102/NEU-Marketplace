@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { supabase } from './config/supabaseClient';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import MainPage from './pages/MainPage';
 import ShoppingCartPage from './pages/ShoppingCartPage';
+import LoadingSpinner from './components/LoadingSpinner';
 
 function AppContent() {
   const navigate = useNavigate();
+  const { user, loading } = useAuth();
   const [listings, setListings] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-  const [currentUser] = useState({ id: 1, name: "Current User" });
+
+
 
   useEffect(() => {
     fetchListings();
@@ -22,6 +26,7 @@ function AppContent() {
         
     if (error) {
       console.error('Error fetching listings:', error);
+      alert(`Error fetching listings: ${error.message}`);
       return;
     }
     
@@ -29,7 +34,12 @@ function AppContent() {
   }
 
   const handleCreateListing = async (formData) => {
-    const { data } = await supabase
+    if (!user) {
+      alert('Please sign in to create a listing');
+      return;
+    }
+
+    const { data, error } = await supabase
       .from('listings')
       .insert([{
         title: formData.title,
@@ -37,12 +47,18 @@ function AppContent() {
         category: formData.category,
         description: formData.description,
         location: formData.location,
-        seller_name: currentUser.name,
-        seller_id: currentUser.id,
+        seller_name: user.email,
+        seller_id: user.id,
         seller_rating: 5.0,
         image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400"
       }])
       .select();
+    
+    if (error) {
+      console.error('Error creating listing:', error);
+      alert(`Error creating listing: ${error.message}`);
+      return;
+    }
     
     if (data) {
       setListings([data[0], ...listings]);
@@ -50,7 +66,31 @@ function AppContent() {
   };
 
   const handleDeleteListing = async (id) => {
-    await supabase.from('listings').delete().eq('id', id);
+    if (!user) {
+      alert('Please sign in to delete listings');
+      return;
+    }
+
+    // Find the listing to check if user is the owner
+    const listing = listings.find(l => l.id === id);
+    if (!listing) {
+      alert('Listing not found');
+      return;
+    }
+
+    if (listing.seller_id !== user.id) {
+      alert('You can only delete your own listings');
+      return;
+    }
+
+    const { error } = await supabase.from('listings').delete().eq('id', id);
+    
+    if (error) {
+      console.error('Error deleting listing:', error);
+      alert(`Error deleting listing: ${error.message}`);
+      return;
+    }
+
     setListings(listings.filter(listing => listing.id !== id));
   };
 
@@ -94,6 +134,10 @@ function AppContent() {
     return cartItems.reduce((total, item) => total + item.quantity, 0);
   };
 
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <Routes>
       <Route 
@@ -103,7 +147,6 @@ function AppContent() {
             listings={listings}
             onCreateListing={handleCreateListing}
             onDeleteListing={handleDeleteListing}
-            currentUser={currentUser}
             onAddToCart={handleAddToCart}
             cartItemCount={getCartItemCount()}
             onNavigateToCart={() => navigate('/cart')}
@@ -129,9 +172,11 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </AuthProvider>
   );
 }
 
