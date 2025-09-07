@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { colors } from './constants/colors';
-import ListingCard from './components/ListingCard';
+import MainPage from './pages/MainPage';
 
 function App() {
     const [listings, setListings] = useState([
@@ -36,10 +35,10 @@ function App() {
         }
     ]);
 
-    // Placeholder functions for HS2
-    const handleListingClick = (listing) => {
-        console.log('Clicked listing:', listing);
-        alert('Listing detail functionality will be added in a later week!');
+    // Placeholder functions for Week 3
+    const handleCreateListing = (formData) => {
+        console.log('Create listing:', formData);
+        alert('Create listing functionality will be added in a later week!');
     };
 
     const handleDeleteListing = (id) => {
@@ -47,29 +46,24 @@ function App() {
         alert('Delete listing functionality will be added in a later week!');
     };
 
-    return (
-        <div style={{ backgroundColor: colors.background, minHeight: '100vh' }}>
-            <header style={{
-                background: `linear-gradient(to right, ${colors.primary}, ${colors.accent})`,
-                padding: '24px'
-            }}>
-                <h1 className="text-4xl font-bold text-white">Oasis Desert Deals</h1>
-                <p className="text-white opacity-90">Student Marketplace</p>
-            </header>
+    const handleAddToCart = (listing) => {
+        console.log('Add to cart:', listing);
+        alert('Cart functionality will be added in a later week!');
+    };
 
-            <main className="max-w-6xl mx-auto p-8">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    {listings.map(listing => (
-                        <ListingCard
-                            key={listing.id}
-                            listing={listing}
-                            onClick={() => handleListingClick(listing)}
-                            onDelete={handleDeleteListing}
-                        />
-                    ))}
-                </div>
-            </main>
-        </div>
+    const handleCartClick = () => {
+        alert('Cart page will be added in a later week!');
+    };
+
+    return (
+        <MainPage
+            listings={listings}
+            onCreateListing={handleCreateListing}
+            onDeleteListing={handleDeleteListing}
+            onAddToCart={handleAddToCart}
+            cartItemCount={0}
+            onNavigateToCart={handleCartClick}
+        />
     );
 }
 
