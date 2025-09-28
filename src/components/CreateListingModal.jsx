@@ -80,6 +80,29 @@ function CreateListingModal({ show, onClose, formData, setFormData, onSubmit }) 
             />
           </div>
 
+          <div>
+            <label className="block mb-1">Image URL</label>
+            <input
+              type="url"
+              value={formData.image}
+              onChange={(e) => handleChange('image', e.target.value)}
+              className="w-full px-3 py-2 border rounded"
+              placeholder="https://example.com/image.jpg"
+            />
+            {formData.image && (
+              <div className="mt-2">
+                <img
+                  src={formData.image}
+                  alt="Preview"
+                  className="w-full h-32 object-cover rounded border"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
           <div className="flex gap-3">
             <button
               type="button"

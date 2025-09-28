@@ -10,9 +10,9 @@ function App() {
             price: 45,
             category: "textbooks",
             description: "Barely used calculus textbook",
-            seller_name: "John Doe",
+            seller_name: "Aryan",
             seller_rating: 4.5,
-            image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400"
+            image: "https://www.wolfram-media.com/products/img/IntroToCalc-bookhomepage.png"
         },
         {
             id: 2,
@@ -20,9 +20,9 @@ function App() {
             price: 30,
             category: "furniture",
             description: "Complete set of dorm room essentials",
-            seller_name: "Jane Smith",
+            seller_name: "Paarth",
             seller_rating: 4.8,
-            image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400"
+            image: "https://caaneo.ca/sites/default/files/styles/scale_800/public/2024-10/iStock-1000325068-1536x1024.jpg.webp"
         },
         {
             id: 3,
@@ -30,9 +30,9 @@ function App() {
             price: 120,
             category: "transportation",
             description: "Gently used bicycle in great condition",
-            seller_name: "Mike Johnson",
+            seller_name: "Ciaran",
             seller_rating: 4.2,
-            image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400"
+            image: "https://www.prioritybicycles.com/cdn/shop/files/600_hero_May2024_1of1.jpg?v=1716221309"
         }
     ]);
 

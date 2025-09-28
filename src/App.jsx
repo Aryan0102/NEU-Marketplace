@@ -50,7 +50,7 @@ function AppContent() {
         seller_name: user.email,
         seller_id: user.id,
         seller_rating: 5.0,
-        image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400"
+        image: formData.image || "https://upload.wikimedia.org/wikipedia/commons/3/34/Rub_al_Khali_002.JPG"
       }])
       .select();
     
